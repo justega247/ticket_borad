@@ -85,4 +85,53 @@ export class AuthController {
       }
     })
   };
+
+  static login = async (req: Request, res: Response) => {
+    //Check if username and password are set
+    let { username, password } = req.body;
+    if (!(username && password)) {
+      res.status(400).json({
+        status: 'failed',
+        message: 'Please provide complete login credentials'
+      });
+    }
+
+    //Get user from database
+    const userRepository = getRepository(User);
+    let user: User;
+    try {
+      user = await userRepository.findOneOrFail({ where: { username } });
+    } catch (error) {
+      res.status(400).json({
+        status: 'failed',
+        message: "The username does not exists"
+      });
+      return;
+    }
+
+    if (!user.checkIfUnencryptedPasswordIsValid(password)) {
+      res.status(400).json({
+        status: 'failed',
+        message: "The password you have provided is incorrect"
+      });
+      return;
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, username: user.username, role: user.role },
+      SECRET,
+      { expiresIn: EXPIRES }
+    );
+
+    const { password: userPassword, tickets, ...userDetails } = user
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Login successful',
+      user: {
+        ...userDetails,
+        token
+      }
+    })
+  };
 }
