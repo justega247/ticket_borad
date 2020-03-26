@@ -102,4 +102,53 @@ describe('Running tests', () => {
         .end(done);
     });
   });
+
+  describe('Post /auth/login', () => {
+    it('should login a user and return a token when valid credential is provided', (done) => {
+      request(app)
+        .post('/auth/login')
+        .send({
+          username: 'elNinoperezop',
+          password: 'password',
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.message).to.equal('Login successful');
+          expect(res.body.user).to.have.any.keys('token');
+        })
+        .end(done);
+    });
+
+    it('should not login user with an invalid username', (done) => {
+      request(app)
+        .post('/auth/login')
+        .send({
+          username: 'elNinoperezo',
+          password: 'password',
+        })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.status).to.equal('failed');
+          expect(res.body.message).to.equal('The username does not exists');
+          expect(res.body.user).to.be.undefined;
+        })
+        .end(done);
+    });
+
+    it('should not login user with an invalid password', (done) => {
+      request(app)
+        .post('/auth/login')
+        .send({
+          username: 'elNinoperezop',
+          password: 'passworded'
+        })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.status).to.equal('failed');
+          expect(res.body.message).to.equal('The password you have provided is incorrect');
+          expect(res.body.user).to.be.undefined;
+        })
+        .end(done);
+    });
+  });
 });
