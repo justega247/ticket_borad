@@ -20,8 +20,10 @@
       "@types/bcryptjs": "^2.4.2",
       "@types/body-parser": "^1.19.0",
       "@types/cors": "^2.8.6",
+      "@types/express": "^4.17.3",
       "@types/helmet": "0.0.45",
       "@types/jsonwebtoken": "^8.3.8",
+      "@types/supertest": "^2.0.8",
       "bcryptjs": "^2.4.3",
       "body-parser": "^1.18.1",
       "class-validator": "^0.11.1",
@@ -32,12 +34,15 @@
       "jsonwebtoken": "^8.5.1",
       "pg": "^7.3.0",
       "reflect-metadata": "^0.1.10",
+      "supertest": "^4.0.2",
       "ts-node-dev": "^1.0.0-pre.44",
       "typeorm": "0.2.24"
    },
    "scripts": {
       "start": "ts-node src/index.ts",
-      "test": "mocha -r ts-node/register src/tests/**/*.test.ts",
-      "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test"
+      "test": "mocha -r ts-node/register src/tests/index.test.ts --exit && npm run post:test",
+      "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test",
+      "pretest": "createdb ticketer",
+      "post:test": "dropdb ticketer"
    }
 }
