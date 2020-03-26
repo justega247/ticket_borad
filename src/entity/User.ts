@@ -30,7 +30,6 @@ export class User {
   @Length(4, 100)
   password: string;
 
-  @IsNotEmpty()
   @Column({
     type: 'enum',
     enum: UserRoleType,

@@ -1,11 +1,11 @@
 import "reflect-metadata";
 import {createConnection} from "typeorm";
-import * as express from "express";
-import * as bodyParser from "body-parser";
-import * as helmet from "helmet";
-import * as cors from "cors";
-import {config}from 'dotenv';
-import * as bcrypt from "bcryptjs";
+import express from "express";
+import bodyParser from "body-parser";
+import helmet from "helmet";
+import cors from "cors";
+import { config }from 'dotenv';
+import bcrypt from "bcryptjs";
 import routes from "./routes";
 import { User } from "./entity/User";
 
@@ -15,9 +15,10 @@ const {
     ADMINPASSWORD
 } = process.env
 
+// create express app
+const app: express.Application = express();
+
 createConnection().then(async connection => {
-    // create express app
-    const app: express.Application = express();
 
     // Call midlewares
     app.use(cors());
@@ -50,6 +51,8 @@ createConnection().then(async connection => {
         }));
     }
 
-    console.log("Express server has started on port 3000. Open http://localhost:3000/users to see results");
+    console.log("Express server has started on port 3000.");
 
 }).catch(error => console.log(error));
+
+export default app;
