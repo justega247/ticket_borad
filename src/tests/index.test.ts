@@ -1,1 +1,2 @@
-import './auth.test'
+import './auth.test';
+import './ticket.test';
