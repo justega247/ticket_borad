@@ -16,8 +16,17 @@ export enum TicketStatus {
 
 export enum AdminAssigned {
   ADMINONE='adminOne',
-  ADMINTWO='adminTwo'
+  ADMINTWO='adminTwo',
+  UNASSIGNED='unassigned'
 }
+
+export enum TicketType {
+  BUGFIX='bug',
+  CHORE='chore',
+  FEATURE='feature'
+}
+
+type Complexity = 0 | 1 | 2 | 3
 
 @Entity()
 export class Ticket {
@@ -27,19 +36,26 @@ export class Ticket {
   @Column()
   summary: string;
 
-  @Column()
+  @Column("text")
   description: string;
 
-  @Column()
-  type: string;
+  @Column({
+    type: 'enum',
+    enum: TicketType,
+    default: TicketType.FEATURE
+  })
+  type: TicketType;
 
-  @Column()
-  complexity: string;
+  @Column({
+    type: "integer",
+    default: 0
+  })
+  complexity: Complexity;
 
   @Column({
     type: 'enum',
     enum: TicketStatus,
-    default: TicketStatus.PENDING,
+    default: TicketStatus.PENDING
   })
   status: TicketStatus;
 
@@ -48,7 +64,8 @@ export class Ticket {
 
   @Column({
     type: 'enum',
-    enum: AdminAssigned
+    enum: AdminAssigned,
+    default: AdminAssigned.UNASSIGNED
   })
   assignee: AdminAssigned;
 

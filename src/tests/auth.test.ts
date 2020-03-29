@@ -3,21 +3,21 @@ import { describe, it } from 'mocha';
 import request from 'supertest';
 import { config }from 'dotenv';
 import bcrypt from "bcryptjs";
-import { createConnection, Connection, Index } from 'typeorm';
+import { createConnection, Connection } from 'typeorm';
 import app from '../index';
 
 
 config()
 
 const {
-    HOST,
-    USERNAME,
-    PASSWORD,
-    DATABASE,
-    ADMINPASSWORD
+  HOST,
+  USERNAME,
+  PASSWORD,
+  DATABASE,
+  ADMINPASSWORD
 } = process.env
 
-describe('Running tests', () => {
+describe('Running auth tests', () => {
   let connection: Connection;
   before(async () => {
     connection = await createConnection({
