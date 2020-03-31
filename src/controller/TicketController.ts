@@ -138,4 +138,38 @@ export class TicketController {
       return;
     }
   };
+
+  static retrieveAssignedTickets = async (req: Request, res: Response) => {
+    const { role, username } = res.locals.user;
+
+    if (role !== 'admin') {
+      return res.status(403).json({
+        status: "failed",
+        message: 'Sorry, you are not allowed access to this route',
+      });
+    }
+
+    const ticketRepository = getRepository(Ticket);
+
+    let ticketsFound: Ticket[];
+
+    try {
+      ticketsFound = await ticketRepository.find({
+        where: {
+          assignee: username
+        }
+      });
+
+      return res.status(200).json({
+        status: "success",
+        tickets: ticketsFound
+      })
+
+    } catch(error) {
+      return res.status(400).json({
+        status: "failed",
+        message: "An error occured while getting the stories",
+      });
+    }
+  };
 }
