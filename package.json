@@ -40,6 +40,7 @@
    },
    "scripts": {
       "start": "ts-node src/index.ts",
+      "start:dev": "ts-node-dev src/index.ts",
       "test": "mocha -r ts-node/register src/tests/index.test.ts --exit && npm run post:test",
       "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test",
       "pretest": "createdb ticketer",
