@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 import { Ticket, TicketStatus } from "../entity/Ticket";
 import { validate } from "class-validator";
-import { validTypes, validAssignee, validComplexity } from "../utils/helper"
+import { validTypes, validAssignee, validComplexity, validAdmins } from "../utils/helper"
 
 export class TicketController {
   static newTicket = async (req: Request, res: Response) => {
@@ -82,5 +82,60 @@ export class TicketController {
       message: 'New ticket created',
       ticket: createdTicket
     }); 
+  };
+
+  static assignTicket = async (req: Request, res: Response) => {
+    const ticketId = Number(req.params.id)
+
+    if (Number.isNaN(ticketId)) {
+      return res.status(400).json({
+        status: "failed",
+        message: 'The id provided is invalid',
+      });
+    }
+
+    const { assignee } = req.body;
+
+    if (assignee && !validAdmins.includes(assignee)) {
+      res.status(400).json({
+        status: 'failed',
+        message: 'The assignee you entered is invalid'
+      });
+      return;
+    }
+
+    const ticketRepository = getRepository(Ticket);
+
+    const userId = res.locals.user.userId;
+
+    try {
+      let ticketFound: Ticket;
+      ticketFound = await ticketRepository.findOneOrFail({
+        where: {
+          id: ticketId,
+          user: {
+            id: userId
+          }
+        }
+      });
+
+      ticketFound.assignee = assignee;
+
+      await ticketRepository.save(ticketFound)
+
+      const updatedTicket: Ticket = await ticketRepository.findOne(ticketId)
+
+      return res.status(200).json({
+        status: "success",
+        ticket: updatedTicket
+      })
+
+    } catch(error) {
+      res.status(400).json({
+        status: "failed",
+        message: "You cannot assign this story",
+      });
+      return;
+    }
   };
 }
