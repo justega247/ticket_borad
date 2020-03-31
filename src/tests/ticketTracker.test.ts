@@ -4,7 +4,7 @@ import request from 'supertest';
 import { config }from 'dotenv';
 import bcrypt from "bcryptjs";
 import { createConnection, Connection } from 'typeorm';
-import { userToken, secondUserToken, invalidUserToken } from './testMock';
+import { adminToken, userToken, secondUserToken, invalidUserToken } from './testMock';
 import app from '../index';
 
 
@@ -36,7 +36,7 @@ describe('Running auth tests', () => {
 
     await connection.manager.save(
       connection.manager.create('User', {
-        username: 'johnsmith',
+        username: 'adminOne',
         password: hashedPassword,
         role: 'admin',
       })
@@ -44,7 +44,7 @@ describe('Running auth tests', () => {
 
     await connection.manager.save(
       connection.manager.create('User', {
-        username: 'johnnydrille',
+        username: 'adminTwo',
         password: hashedPassword,
         role: 'admin',
       })
@@ -306,11 +306,11 @@ describe('Running auth tests', () => {
   describe('Post /ticket/:id/assign', () => {
     it('should assign a ticket when valid details are provided', (done) => {
       const assigneeDetails = {
-        assignee: "adminTwo"
+        assignee: "adminOne"
       }
 
       request(app)
-        .post('/ticket/1/assign')
+        .put('/ticket/1/assign')
         .set('authorization', userToken)
         .send(assigneeDetails)
         .expect(200)
@@ -323,11 +323,11 @@ describe('Running auth tests', () => {
 
     it('should not assign a ticket created by a different user', (done) => {
       const assigneeDetails = {
-        assignee: "adminTwo"
+        assignee: "adminOne"
       }
 
       request(app)
-        .post('/ticket/1/assign')
+        .put('/ticket/1/assign')
         .set('authorization', secondUserToken)
         .send(assigneeDetails)
         .expect(400)
@@ -344,13 +344,39 @@ describe('Running auth tests', () => {
       }
 
       request(app)
-        .post('/ticket/1/assign')
+        .put('/ticket/1/assign')
         .set('authorization', userToken)
         .send(assigneeDetails)
         .expect(400)
         .expect((res) => {
           expect(res.body.status).to.equal('failed');
           expect(res.body.message).to.equal('The assignee you entered is invalid');
+        })
+        .end(done)
+      });
+  });
+
+  describe('Post /ticket/admin', () => {
+    it('should retrieve all the tickets assigned to an admin', (done) => {
+      request(app)
+        .get('/ticket/admin')
+        .set('authorization', adminToken)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.status).to.equal('success');
+          expect(res.body.tickets).to.have.lengthOf(1)
+        })
+        .end(done)
+      });
+
+    it('should not retrieve all tickets when an ordinary user accesses the route', (done) => {
+      request(app)
+        .get('/ticket/admin')
+        .set('authorization', userToken)
+        .expect(403)
+        .expect((res) => {
+          expect(res.body.status).to.equal('failed');
+          expect(res.body.message).to.equal('Sorry, you are not allowed access to this route')
         })
         .end(done)
       });

@@ -5,6 +5,10 @@ config()
 
 const { SECRET } = process.env;
 
+export const adminToken = jwt.sign({ userId: 1, username: 'adminOne', role: 'admin' }, SECRET, {
+  expiresIn: '1d',
+});
+
 export const userToken = jwt.sign({ userId: 3, username: 'elNinoperezop', role: 'user' }, SECRET, {
   expiresIn: '1d',
 });
