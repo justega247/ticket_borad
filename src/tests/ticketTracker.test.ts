@@ -4,7 +4,7 @@ import request from 'supertest';
 import { config }from 'dotenv';
 import bcrypt from "bcryptjs";
 import { createConnection, Connection } from 'typeorm';
-import { adminToken, userToken, secondUserToken, invalidUserToken } from './testMock';
+import { adminToken, adminToken2, userToken, secondUserToken, invalidUserToken } from './testMock';
 import app from '../index';
 
 
@@ -303,7 +303,7 @@ describe('Running auth tests', () => {
       });
   });
 
-  describe('Post /ticket/:id/assign', () => {
+  describe('Put /ticket/:id/assign', () => {
     it('should assign a ticket when valid details are provided', (done) => {
       const assigneeDetails = {
         assignee: "adminOne"
@@ -381,4 +381,81 @@ describe('Running auth tests', () => {
         .end(done)
       });
   });
+
+  describe('Post /ticket/:id/manage?action={action}', () => {
+    it('should set the status of a ticket to approved when valid details are provided' , (done) => {
+      const action = 'approve'
+      const id = 1;
+
+      request(app)
+        .put(`/ticket/${id}/manage?action=${action}`)
+        .set('authorization', adminToken)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.status).to.equal('success');
+          expect(res.body.ticket.status).to.equal('approved')
+        })
+        .end(done)
+    });
+
+    it('should not set the status of a ticket when invalid action is provided' , (done) => {
+      const action = 'approval'
+      const id = 1;
+
+      request(app)
+        .put(`/ticket/${id}/manage?action=${action}`)
+        .set('authorization', adminToken)
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.status).to.equal('failed');
+          expect(res.body.message).to.equal('Please provide a valid action')
+        })
+        .end(done)
+    });
+
+    it('should not set the status of a ticket when invalid id is provided' , (done) => {
+      const action = 'approval'
+      const id = 'pop';
+
+      request(app)
+        .put(`/ticket/${id}/manage?action=${action}`)
+        .set('authorization', adminToken)
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.status).to.equal('failed');
+          expect(res.body.message).to.equal('The id provided is invalid')
+        })
+        .end(done)
+    });
+
+    it('should not allow an ordinary user manage a ticket' , (done) => {
+      const action = 'approve'
+      const id = 1;
+
+      request(app)
+        .put(`/ticket/${id}/manage?action=${action}`)
+        .set('authorization', userToken)
+        .expect(403)
+        .expect((res) => {
+          expect(res.body.status).to.equal('failed');
+          expect(res.body.message).to.equal('Sorry, you are not allowed access to this route')
+        })
+        .end(done)
+    });
+
+    it('should not set the status of a ticket assigned to a different admin' , (done) => {
+      const action = 'approve'
+      const id = 1;
+
+      request(app)
+        .put(`/ticket/${id}/manage?action=${action}`)
+        .set('authorization', adminToken2)
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.status).to.equal('failed');
+          expect(res.body.message).to.equal('You cannot manage this story')
+        })
+        .end(done)
+    });
+  })
 });

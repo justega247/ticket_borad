@@ -9,6 +9,10 @@ export const adminToken = jwt.sign({ userId: 1, username: 'adminOne', role: 'adm
   expiresIn: '1d',
 });
 
+export const adminToken2 = jwt.sign({ userId: 2, username: 'adminTwo', role: 'admin' }, SECRET, {
+  expiresIn: '1d',
+});
+
 export const userToken = jwt.sign({ userId: 3, username: 'elNinoperezop', role: 'user' }, SECRET, {
   expiresIn: '1d',
 });
