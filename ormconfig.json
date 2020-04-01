@@ -1,4 +1,4 @@
-[{
+{
    "type": "postgres",
    "host": "localhost",
    "port": 5432,
@@ -21,14 +21,4 @@
       "migrationsDir": "src/migration",
       "subscribersDir": "src/subscriber"
    }
-}, {
-   "name": "test",
-   "type": "postgres",
-   "host": "localhost",
-   "port": 5432,
-   "username": "oghenetega",
-   "password": "vitabrevis",
-   "database": "ticketer",
-   "synchronize": true,
-   "entities": ["src/entity/**/*.ts"]
-}]
+}

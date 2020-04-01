@@ -2,7 +2,7 @@ import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 import { Ticket, TicketStatus } from "../entity/Ticket";
 import { validate } from "class-validator";
-import { validTypes, validAssignee, validComplexity, validAdmins } from "../utils/helper"
+import { validTypes, validAssignee, validComplexity, validAdmins, manageTicket } from "../utils/helper"
 
 export class TicketController {
   static newTicket = async (req: Request, res: Response) => {
@@ -97,11 +97,10 @@ export class TicketController {
     const { assignee } = req.body;
 
     if (assignee && !validAdmins.includes(assignee)) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 'failed',
         message: 'The assignee you entered is invalid'
       });
-      return;
     }
 
     const ticketRepository = getRepository(Ticket);
@@ -131,11 +130,10 @@ export class TicketController {
       })
 
     } catch(error) {
-      res.status(400).json({
+      return res.status(400).json({
         status: "failed",
         message: "You cannot assign this story",
       });
-      return;
     }
   };
 
@@ -171,5 +169,65 @@ export class TicketController {
         message: "An error occured while getting the stories",
       });
     }
+  };
+
+  static manageAssignedTicket = async (req: Request, res: Response) => {
+    const { role, username } = res.locals.user;
+
+    const ticketId = Number(req.params.id)
+
+    if (Number.isNaN(ticketId)) {
+      return res.status(400).json({
+        status: "failed",
+        message: 'The id provided is invalid',
+      });
+    }
+
+    const action = req.query.action
+
+    if (role !== 'admin') {
+      return res.status(403).json({
+        status: "failed",
+        message: 'Sorry, you are not allowed access to this route',
+      });
+    }
+
+    if (!Object.keys(manageTicket).includes(action)) {
+      return res.status(400).json({
+        status: "failed",
+        message: 'Please provide a valid action',
+      });
+    }
+
+
+    const ticketRepository = getRepository(Ticket);
+
+    let ticketFound: Ticket;
+
+    try{
+      ticketFound = await ticketRepository.findOneOrFail({
+        where: {
+          id: ticketId,
+          assignee: username
+        }
+      });
+
+      ticketFound.status = manageTicket[action]
+
+      await ticketRepository.save(ticketFound)
+
+      const updatedTicket: Ticket = await ticketRepository.findOne(ticketId)
+
+      return res.status(200).json({
+        status: "success",
+        ticket: updatedTicket
+      })
+    } catch(e) {
+      return res.status(400).json({
+        status: "failed",
+        message: "You cannot manage this story",
+      });
+    }
+
   };
 }

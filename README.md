@@ -1,4 +1,5 @@
 # Awesome Project Build with TypeORM
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/3ce78bbcd83082801f57)
 
 Steps to run this project:
 
