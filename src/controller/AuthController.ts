@@ -1,10 +1,11 @@
-import { getRepository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { config }from 'dotenv';
 import { User } from "../entity/User";
 import { validate } from "class-validator";
 import { validRoles } from "../utils/helper"
+import { Login, ICreateUser } from "../common/types"
 
 config()
 
@@ -14,11 +15,11 @@ const {
 } = process.env
 
 export class AuthController {
-  static newUser = async (req: Request, res: Response) => {
-    const userRepository = getRepository(User);
+  static newUser = async (req: Request, res: Response): Promise<Response<any>> => {
+    const userRepository: Repository<User> = getRepository(User);
     
     //Get parameters from the body
-    let { username, password, role } = req.body;
+    let { username, password, role }: ICreateUser = req.body;
 
     let existingUsername = await userRepository.findOne({ username });
 
@@ -53,7 +54,7 @@ export class AuthController {
     //Hash the password, to securely store on DB
     user.hashPassword();
 
-    let createdUser;
+    let createdUser: User;
     try {
       createdUser = await userRepository.save(user);
     } catch (error) {
@@ -82,9 +83,10 @@ export class AuthController {
     })
   };
 
-  static login = async (req: Request, res: Response) => {
+  static login = async (req: Request, res: Response): Promise<Response<any>> => {
     //Check if username and password are set
-    let { username, password } = req.body;
+    let { username, password }: Login = req.body;
+
     if (!(username && password)) {
       return res.status(400).json({
         status: 'failed',
@@ -93,8 +95,9 @@ export class AuthController {
     }
 
     //Get user from database
-    const userRepository = getRepository(User);
+    const userRepository: Repository<User> = getRepository(User);
     let user: User;
+
     try {
       user = await userRepository.findOneOrFail({ where: { username } });
     } catch (error) {
@@ -128,4 +131,4 @@ export class AuthController {
       }
     })
   };
-}
+};

@@ -15,17 +15,19 @@ const {
     ADMINPASSWORD
 } = process.env
 
+const PORT: number = Number(process.env.PORT as string)
+
 const app: express.Application = express();
 
 createConnection().then(async connection => {
 
     app.use(cors());
     app.use(helmet());
-    app.use(bodyParser.json());
+    app.use(express.json());
 
     app.use("/", routes);
 
-    app.listen(3000);
+    app.listen(PORT);
 
     let userRepository = connection.getRepository(User);
     let adminUser: User = await userRepository.findOne({ username: "adminOne", });
@@ -45,7 +47,7 @@ createConnection().then(async connection => {
         }));
     }
 
-    console.log("Express server has started on port 3000.");
+    console.log(`Express server has started on port ${PORT}.`);
 
 }).catch(error => console.log(error));
 

@@ -10,11 +10,7 @@ import {
 import { Ticket } from './Ticket';
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
-
-export enum UserRoleType {
-  ADMIN ='admin',
-  USER='user'
-};
+import { UserRoleType } from "../common/types"
   
 @Entity()
 @Unique(["username"])
