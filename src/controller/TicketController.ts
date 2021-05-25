@@ -45,7 +45,7 @@ export class TicketController {
     if (type) {
       ticket.type = type;
     };
-    if (complexity){
+    if (complexity) {
       ticket.complexity = complexity;
     };
     if (assignee) {
@@ -81,7 +81,7 @@ export class TicketController {
       status: 'success',
       message: 'New ticket created',
       ticket: createdTicket
-    }); 
+    });
   };
 
   static assignTicket = async (req: Request, res: Response) => {
@@ -129,7 +129,7 @@ export class TicketController {
         ticket: updatedTicket
       })
 
-    } catch(error) {
+    } catch (error) {
       return res.status(400).json({
         status: "failed",
         message: "You cannot assign this story",
@@ -163,7 +163,7 @@ export class TicketController {
         tickets: ticketsFound
       })
 
-    } catch(error) {
+    } catch (error) {
       return res.status(400).json({
         status: "failed",
         message: "An error occured while getting the stories",
@@ -204,7 +204,7 @@ export class TicketController {
 
     let ticketFound: Ticket;
 
-    try{
+    try {
       ticketFound = await ticketRepository.findOneOrFail({
         where: {
           id: ticketId,
@@ -222,7 +222,7 @@ export class TicketController {
         status: "success",
         ticket: updatedTicket
       })
-    } catch(e) {
+    } catch (e) {
       return res.status(400).json({
         status: "failed",
         message: "You cannot manage this story",

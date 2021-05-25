@@ -58,4 +58,4 @@ Steps to run this project:
 4. Express
 
 # Author(s)
-- Okeremeta Tega
+- Okeremeta Tega.

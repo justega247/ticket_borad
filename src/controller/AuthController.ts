@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { config }from 'dotenv';
+import { config } from 'dotenv';
 import { User } from "../entity/User";
 import { validate } from "class-validator";
 import { validRoles } from "../utils/helper"
@@ -16,7 +16,7 @@ const {
 export class AuthController {
   static newUser = async (req: Request, res: Response) => {
     const userRepository = getRepository(User);
-    
+
     //Get parameters from the body
     let { username, password, role } = req.body;
 

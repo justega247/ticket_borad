@@ -29,10 +29,10 @@ class Authenticate {
           message: 'Please add your token'
         });
       }
-  
+
       let userRepository = getRepository(User);
       let loggedInUser: User = await userRepository.findOne({ id: userId });
-  
+
       if (!loggedInUser) {
         return res.status(404).json({
           status: 'failed',
@@ -40,7 +40,7 @@ class Authenticate {
         });
       }
       next();
-    } catch(error) {
+    } catch (error) {
       return;
     }
   }

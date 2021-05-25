@@ -12,10 +12,10 @@ import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 
 export enum UserRoleType {
-  ADMIN ='admin',
-  USER='user'
+  ADMIN = 'admin',
+  USER = 'user'
 };
-  
+
 @Entity()
 @Unique(["username"])
 export class User {
@@ -38,8 +38,8 @@ export class User {
   role: UserRoleType;
 
   @OneToMany(
-    () => Ticket, 
-    ticket => ticket.user, 
+    () => Ticket,
+    ticket => ticket.user,
     { eager: true, cascade: true }
   )
   tickets: Ticket[]

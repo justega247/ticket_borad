@@ -10,3 +10,4 @@ router.put("/:id/manage", Authenticate.authenticateUser, TicketController.manage
 router.get("/admin", Authenticate.authenticateUser, TicketController.retrieveAssignedTickets)
 
 export default router;
+

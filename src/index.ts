@@ -44,6 +44,7 @@ createConnection().then(async connection => {
             role: "admin"
         }));
     }
+    
 
     console.log("Express server has started on port 3000.");
 
