@@ -1,16 +1,17 @@
-import { getRepository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 import { Request, Response } from "express";
-import { Ticket, TicketStatus } from "../entity/Ticket";
+import { Ticket } from "../entity/Ticket";
 import { validate } from "class-validator";
 import { validTypes, validAssignee, validComplexity, validAdmins, manageTicket } from "../utils/helper"
+import { CreateTicket, TicketStatus } from "../common/types"
 
 export class TicketController {
-  static newTicket = async (req: Request, res: Response) => {
-    const ticketRepository = getRepository(Ticket);
+  static newTicket = async (req: Request, res: Response): Promise<void> => {
+    const ticketRepository: Repository<Ticket> = getRepository(Ticket);
 
     const userId = res.locals.user.userId;
 
-    let { summary, description, type, complexity, estimatedTime, assignee } = req.body;
+    let { summary, description, type, complexity, estimatedTime, assignee }: CreateTicket = req.body;
 
     if (type && !validTypes.includes(type)) {
       res.status(400).json({
@@ -84,8 +85,8 @@ export class TicketController {
     }); 
   };
 
-  static assignTicket = async (req: Request, res: Response) => {
-    const ticketId = Number(req.params.id)
+  static assignTicket = async (req: Request, res: Response): Promise<Response<any>> => {
+    const ticketId: number = Number(req.params.id)
 
     if (Number.isNaN(ticketId)) {
       return res.status(400).json({
@@ -103,7 +104,7 @@ export class TicketController {
       });
     }
 
-    const ticketRepository = getRepository(Ticket);
+    const ticketRepository: Repository<Ticket>  = getRepository(Ticket);
 
     const userId = res.locals.user.userId;
 
@@ -137,7 +138,7 @@ export class TicketController {
     }
   };
 
-  static retrieveAssignedTickets = async (req: Request, res: Response) => {
+  static retrieveAssignedTickets = async (req: Request, res: Response): Promise<Response<any>> => {
     const { role, username } = res.locals.user;
 
     if (role !== 'admin') {
@@ -171,10 +172,10 @@ export class TicketController {
     }
   };
 
-  static manageAssignedTicket = async (req: Request, res: Response) => {
+  static manageAssignedTicket = async (req: Request, res: Response): Promise<Response<any>> => {
     const { role, username } = res.locals.user;
 
-    const ticketId = Number(req.params.id)
+    const ticketId: number = Number(req.params.id);
 
     if (Number.isNaN(ticketId)) {
       return res.status(400).json({
@@ -230,4 +231,4 @@ export class TicketController {
     }
 
   };
-}
+};

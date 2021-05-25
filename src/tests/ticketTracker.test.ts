@@ -32,7 +32,7 @@ describe('Running auth tests', () => {
       entities: ['src/entity/**/*.ts'],
     });
 
-    const hashedPassword = bcrypt.hashSync(ADMINPASSWORD, 8)
+    const hashedPassword: string = bcrypt.hashSync(ADMINPASSWORD, 8)
 
     await connection.manager.save(
       connection.manager.create('User', {

@@ -1,16 +1,14 @@
 import { User } from "../entity/User";
 import { Request, Response, NextFunction } from "express";
 import { verify } from 'jsonwebtoken';
-import { getRepository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 
-const {
-  SECRET
-} = process.env
+const SECRET: string = process.env.SECRET as string
 
 class Authenticate {
   static authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token = req.headers.authorization;
+      const token: string = req.headers.authorization as string;
       let userId;
       if (token) {
         verify(token, SECRET, (err, decoded) => {
@@ -30,7 +28,7 @@ class Authenticate {
         });
       }
   
-      let userRepository = getRepository(User);
+      let userRepository: Repository<User> = getRepository(User);
       let loggedInUser: User = await userRepository.findOne({ id: userId });
   
       if (!loggedInUser) {

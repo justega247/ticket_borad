@@ -7,26 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { User } from './User';
-
-export enum TicketStatus {
-  APPROVED='approved',
-  REJECTED='rejected',
-  PENDING='pending'
-}
-
-export enum AdminAssigned {
-  ADMINONE='adminOne',
-  ADMINTWO='adminTwo',
-  UNASSIGNED='unassigned'
-}
-
-export enum TicketType {
-  BUGFIX='bug',
-  CHORE='chore',
-  FEATURE='feature'
-}
-
-type Complexity = 0 | 1 | 2 | 3
+import { TicketStatus, TicketType, AdminAssigned, Complexity } from "../common/types";
 
 @Entity()
 export class Ticket {
