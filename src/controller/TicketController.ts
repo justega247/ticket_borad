@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { Ticket } from "../entity/Ticket";
 import { validate } from "class-validator";
 import { validTypes, validAssignee, validComplexity, validAdmins, manageTicket } from "../utils/helper"
-import { CreateTicket, TicketStatus } from "../common/types"
+import { ICreateTicket, TicketStatus } from "../common/types"
 
 export class TicketController {
   static newTicket = async (req: Request, res: Response): Promise<void> => {
@@ -11,7 +11,7 @@ export class TicketController {
 
     const userId = res.locals.user.userId;
 
-    let { summary, description, type, complexity, estimatedTime, assignee }: CreateTicket = req.body;
+    let { summary, description, type, complexity, estimatedTime, assignee }: ICreateTicket = req.body;
 
     if (type && !validTypes.includes(type)) {
       res.status(400).json({
