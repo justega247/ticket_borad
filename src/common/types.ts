@@ -18,7 +18,7 @@ export enum TicketType {
 
 export type Complexity = 0 | 1 | 2 | 3;
 
-export type CreateTicket = {
+export interface ICreateTicket {
   summary: string;
 	description: string;
 	estimatedTime: string;
@@ -32,11 +32,11 @@ export enum UserRoleType {
   USER='user'
 };
 
-export type Login = {
+export interface ILogin {
   username: string;
   password: string;
 };
 
-export interface ICreateUser extends Login {
+export interface ICreateUser extends ILogin {
   role?: UserRoleType;
 };

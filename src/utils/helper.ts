@@ -1,6 +1,4 @@
-import { TicketStatus, AdminAssigned, TicketType, UserRoleType } from "../common/types"
-
-
+import { TicketStatus, AdminAssigned, TicketType, UserRoleType } from "../common/types";
 
 export const validRoles = [UserRoleType.ADMIN, UserRoleType.USER];
 export const validTypes = [TicketType.BUGFIX, TicketType.CHORE, TicketType.FEATURE];

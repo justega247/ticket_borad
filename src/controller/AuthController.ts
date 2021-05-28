@@ -5,7 +5,7 @@ import { config }from 'dotenv';
 import { User } from "../entity/User";
 import { validate } from "class-validator";
 import { validRoles } from "../utils/helper"
-import { Login, ICreateUser } from "../common/types"
+import { ILogin, ICreateUser } from "../common/types"
 
 config()
 
@@ -85,7 +85,7 @@ export class AuthController {
 
   static login = async (req: Request, res: Response): Promise<Response<any>> => {
     //Check if username and password are set
-    let { username, password }: Login = req.body;
+    let { username, password }: ILogin = req.body;
 
     if (!(username && password)) {
       return res.status(400).json({
